@@ -1,7 +1,11 @@
 import unittest
+from otbinutils.tdat import tdat
 
 
-class BaseTestCase(unittest.TestCase):
+class TDatTestCase(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.t_dat = tdat.TDat(1076)
+
+    def test_to_json(self):
+        self.t_dat.to_json()
