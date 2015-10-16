@@ -29,12 +29,12 @@ class File():
         return struct.unpack('I',chunck)[0]
 
     def read_int16(self):
-        chunck = self.file.read(2) + bytes(2)
-        return struct.unpack('I',chunck)[0]
+        chunck = self.file.read(2)
+        return struct.unpack('H',chunck)[0]
 
     def read_byte(self):
-        chunck = self.file.read(1) + bytes(3)
-        return struct.unpack('I',chunck)[0]
+        chunck = self.file.read(1)
+        return struct.unpack('B',chunck)[0]
 
     def read_string(self, size):
         chunck = self.file.read(size)
