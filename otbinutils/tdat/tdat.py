@@ -8,6 +8,13 @@ class TDat():
         self.file = fileutils.File(version, "dat")
         self.__read_file()
 
+    def __iter__(self):
+        for key, value in list(self.__dict__.items()):
+            if key == "file":
+                continue
+            else:
+                yield (key, value)
+
     def __read_file(self):
         self.dat_version = self.file.read_int32()
         self.item_count = self.file.read_int16()
@@ -17,7 +24,6 @@ class TDat():
         self.max_ID = self.item_count + self.outfit_count + self.effect_count + self.projectile_count
         self.items = []
         ID = 100
-        flag = DAT.Flag_Bank
         while ID < self.max_ID:
             current_item = ItemData()
             current_item.ID = ID
@@ -118,10 +124,10 @@ class TDat():
                     action = self.file.read_int16()
                 elif flag == DAT.BreakFlag:
                     break
-            FrameGroupCount = self.file.read_byte() if (ID > self.item_count and ID <= (self.item_count + self.outfit_count)) else 1
-            for frame in range(FrameGroupCount):
+            current_item.FrameGroupCount = self.file.read_byte() if (ID > self.item_count and ID <= (self.item_count + self.outfit_count)) else 1
+            for frame in range(current_item.FrameGroupCount):
 
-                FrameGroupID = self.file.read_byte() if (ID > self.item_count and ID <= (self.item_count + self.outfit_count)) else 0
+                current_item.FrameGroupID = self.file.read_byte() if (ID > self.item_count and ID <= (self.item_count + self.outfit_count)) else 0
 
                 current_item.Width = self.file.read_byte()
                 current_item.Height = self.file.read_byte()
@@ -136,12 +142,12 @@ class TDat():
 
                 if current_item.Phases > 1:
                     loc8 = 0
-                    unknown1 = self.file.read_byte()
-                    unknown2 = self.file.read_int32()
-                    unknown3 = self.file.read_byte()
+                    current_item.unknown1 = self.file.read_byte()
+                    current_item.unknown2 = self.file.read_int32()
+                    current_item.unknown3 = self.file.read_byte()
                     while loc8 < current_item.Phases:
-                        unknown4 = self.file.read_int32()
-                        unknown5 = self.file.read_int32();
+                        current_item.unknown4 = self.file.read_int32()
+                        current_item.unknown5 = self.file.read_int32();
                         loc8 = loc8 + 1
 
                 numSpr = current_item.Width * current_item.Height
@@ -158,8 +164,8 @@ class TDat():
 
 
     def to_json(self):
-        with open("output/"+str(self.version)+"/tdat.json", 'w') as outfile:
-            json.dump(self, outfile, default=lambda o: o.__dict__, sort_keys=True, indent=4, ensure_ascii=False)
+        with open("output/"+str(self.version)+"/tdat.json", 'w+') as outfile:
+            json.dump(self, outfile, default=lambda o: dict(o), sort_keys=True, indent=4, ensure_ascii=False)
 
 
 
@@ -304,6 +310,13 @@ class ItemData():
         self.NumberOfSprites = -1
 
         self.Sprites = []
+
+    def __iter__(self):
+        for key, value in list(self.__dict__.items()):
+            if value == -1 or value == "":
+                continue
+            else:
+                yield (key, value)
 
     def __repr__(self):
         return json.dumps(self, default=lambda o: o.__dict__, 
