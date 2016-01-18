@@ -54,6 +54,10 @@ class File():
         self.readstr = self.readstr + size
         return str(chunck, "iso-8859-1")
 
+    def read_bytes(self, quantity):
+        chunck = self.file.read(quantity)
+        return bytearray(chunck)
+
     def write_int32(self, value):
         chunck = struct.pack('=I', value)
         self.written32 = self.written32 + 4
@@ -78,3 +82,9 @@ class File():
         self.writtenstr = self.writtenstr + len(value)
         self.file_export.write(value.encode("iso-8859-1"))
         return
+
+    def seek(self, pos):
+        self.file.seek(pos)
+
+    def tell(self):
+        return self.file.tell()
